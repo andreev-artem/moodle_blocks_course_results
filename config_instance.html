@@ -1,0 +1,131 @@
+<?php
+$usehtmleditor = can_use_html_editor();
+?>
+<table cellpadding="9" cellspacing="0" width="90%">
+<tr valign="top">
+    <td align="right">
+        <?php print_string('config_select_item', 'block_course_results') ?>
+    </td>
+    <td>
+        <?php
+            require_once($CFG->dirroot . '/grade/lib.php');
+            $options = array();
+            $items = grade_item::fetch_all(array('courseid'=>$this->instance->pageid));
+            foreach($items as $key=>$item) {
+                switch($item->itemtype) {
+                    case 'category':
+                        $options[$key] = get_string('categorytotal', 'grades') . ': ' . $item->get_item_category()->fullname;
+                        break;
+                    case 'course':
+                        $options[$key] = get_string('coursetotal', 'grades');
+                        break;
+                    default:
+                        $options[$key] = $item->itemname;
+                }
+            }
+            choose_from_menu($options, 'itemid', empty($this->config->itemid) ? 0 : $this->config->itemid);
+        ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right">
+        <?php print_string('config_show_best', 'block_course_results') ?>
+    </td>
+    <td>
+        <input name="showbest" type="text" size="3" value="<?php
+            p(empty($this->config->showbest) ? 0 : max(0, intval($this->config->showbest)));
+        ?>" />
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right">
+        <?php print_string('config_show_worst', 'block_course_results') ?>
+    </td>
+    <td>
+        <input name="showworst" type="text" size="3" value="<?php
+            p(empty($this->config->showworst) ? 0 : max(0, intval($this->config->showworst)));
+        ?>" />
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right">
+        <?php print_string('config_use_groups', 'block_course_results') ?>
+    </td>
+    <td>
+        <input name="usegroups" type="radio" id="usegroups_yes" <?php if(!empty($this->config->usegroups)) echo 'checked="checked"'; ?> value="1" /> <label for="usegroups_yes"><?php print_string('yes'); ?></label>
+        <input name="usegroups" type="radio" id="usegroups_no"  <?php if(empty($this->config->usegroups)) echo 'checked="checked"'; ?> value="0" /> <label for="usegroups_no"><?php print_string('no'); ?></label>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right">
+        <?php print_string('config_name_format', 'block_course_results') ?>
+    </td>
+    <td>
+    <?php
+        $usenames = array(B_COURSERESULTS_NAME_FORMAT_FULL => get_string('config_names_full', 'block_course_results'), B_COURSERESULTS_NAME_FORMAT_ID => get_string('config_names_id', 'block_course_results'), B_COURSERESULTS_NAME_FORMAT_ANON => get_string('config_names_anon', 'block_course_results'));
+        choose_from_menu($usenames, 'nameformat', empty($this->config->nameformat) ? B_COURSERESULTS_NAME_FORMAT_FULL : $this->config->nameformat, '');
+    ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right">
+        <?php print_string('config_grade_format', 'block_course_results') ?>
+    </td>
+    <td>
+    <?php
+        $formats = array(B_COURSERESULTS_GRADE_FORMAT_PCT => get_string('config_format_percentage', 'block_course_results'), B_COURSERESULTS_GRADE_FORMAT_FRA => get_string('config_format_fraction', 'block_course_results'), B_COURSERESULTS_GRADE_FORMAT_ABS => get_string('config_format_absolute', 'block_course_results'));
+        choose_from_menu($formats, 'gradeformat', empty($this->config->gradeformat) ? 0 : $this->config->gradeformat, '');
+    ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right">
+        <?php print_string('config_title', 'block_course_results') ?>
+    </td>
+    <td>
+    	<input name="blocktitle" type="text" size="24" value="<?php
+    	    p(empty($this->config->blocktitle) ? "" : $this->config->blocktitle)
+    	?>" /> 
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right">
+        <?php print_string('config_showuserpic', 'block_course_results') ?>
+    </td>
+    <td>
+    	<input name="showuserpic" type="checkbox"
+    	<?php if (!empty($this->config->showuserpic)) echo "checked" ?> />
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right">
+        <?php print_string('config_header', 'block_course_results') ?>
+    </td>
+    <td>
+    	<?php
+    	$text = empty($this->config->blockheader) ? '' : $this->config->blockheader;
+    	print_textarea($usehtmleditor, 10, 50, 0, 0, 'blockheader', $text);
+    	?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right">
+        <?php print_string('config_footer', 'block_course_results') ?>
+    </td>
+    <td>
+    	<?php
+    	$text = empty($this->config->blockfooter) ? '' : $this->config->blockfooter;
+    	print_textarea($usehtmleditor, 10, 50, 0, 0, 'blockfooter', $text);
+    	?>
+    </td>
+</tr>
+<tr>
+    <td colspan="2" align="center">
+        <input type="submit" value="<?php print_string('savechanges') ?>" />
+    </td>
+</tr>
+</table>
+<?php if ($usehtmleditor) {
+          use_html_editor(); 
+      }
+?>
