@@ -193,7 +193,7 @@ class block_course_results extends block_base {
             if(!empty($best)) {
                 $this->content->text .= '<table class="grades generaltable"><caption>';
                 $this->content->text .= ($numbest == 1?get_string('bestgroupgrade', 'block_course_results'):get_string('bestgroupgrades', 'block_course_results', $numbest));
-                $this->content->text .= '</caption><colgroup class="number" /><colgroup class="name" /><colgroup class="grade" /><tbody>';
+                $this->content->text .= '</caption><colgroup class="name" /><colgroup class="grade" /><tbody>';
                 foreach($best as $groupid => $averagegrade) {
                     switch($nameformat) {
                         case B_COURSERESULTS_NAME_FORMAT_ANON:
@@ -209,7 +209,7 @@ class block_course_results extends block_base {
                             }
                         break;
                     }
-                    $this->content->text .= '<tr class="r'.($rank%2).'"><td>'.(++$rank).'.</td><td>'.$thisname.'</td><td>';
+                    $this->content->text .= '<tr class="r'.($rank%2).'"><td>'.(++$rank).'. '.$thisname.'</td><td>';
                     switch($gradeformat) {
                         case B_COURSERESULTS_GRADE_FORMAT_FRA:
                             $this->content->text .= (format_float($averagegrade,$item->decimals).'/'.(format_float($item->grademax,$item->decimals)));
@@ -232,7 +232,7 @@ class block_course_results extends block_base {
                 $worst = array_reverse($worst, true);
                 $this->content->text .= '<table class="grades generaltable"><caption>';
                 $this->content->text .= ($numworst == 1?get_string('worstgroupgrade', 'block_course_results'):get_string('worstgroupgrades', 'block_course_results', $numworst));
-                $this->content->text .= '</caption><colgroup class="number" /><colgroup class="name" /><colgroup class="grade" /><tbody>';
+                $this->content->text .= '</caption><colgroup class="name" /><colgroup class="grade" /><tbody>';
                 foreach($worst as $groupid => $averagegrade) {
                     switch($nameformat) {
                         case B_COURSERESULTS_NAME_FORMAT_ANON:
@@ -244,7 +244,7 @@ class block_course_results extends block_base {
                             $thisname = '<a href="'.$CFG->wwwroot.'/course/group.php?group='.$groupid.'&amp;id='.$courseid.'">'.$groupgrades[$groupid]['group'].'</a>';
                         break;
                     }
-                    $this->content->text .= '<tr class="r'.($rank%2).'"><td>'.(++$rank).'.</td><td>'.$thisname.'</td><td>';
+                    $this->content->text .= '<tr class="r'.($rank%2).'"><td>'.(++$rank).'. '.$thisname.'</td><td>';
                     switch($gradeformat) {
                         case B_COURSERESULTS_GRADE_FORMAT_FRA:
                             $this->content->text .= (format_float($averagegrade,$item->decimals).'/'.(format_float($item->grademax,$item->decimals)));
@@ -324,7 +324,7 @@ class block_course_results extends block_base {
             if(!empty($best)) {
                 $this->content->text .= '<table class="grades generaltable"><caption>';
                 $this->content->text .= ($numbest == 1?get_string('bestgrade', 'block_course_results'):get_string('bestgrades', 'block_course_results', $numbest));
-                $this->content->text .= '</caption><colgroup class="number" /><colgroup class="name" /><colgroup class="grade" /><tbody>';
+                $this->content->text .= '</caption><colgroup class="name" /><colgroup class="grade" /><tbody>';
                 foreach($best as $userid => $gradeid) {
                     switch($nameformat) {
                         case B_COURSERESULTS_NAME_FORMAT_ID:
@@ -342,7 +342,7 @@ class block_course_results extends block_base {
                             $thisname .= fullname($users[$userid]).'</a>';
                         break;
                     }
-                    $this->content->text .= '<tr class="r'.($rank%2).'"><td>'.(++$rank).'.</td><td>'.$thisname.'</td><td>';
+                    $this->content->text .= '<tr class="r'.($rank%2).'"><td>'.(++$rank).'. '.$thisname.'</td><td>';
                     switch($gradeformat) {
                         case B_COURSERESULTS_GRADE_FORMAT_FRA:
                             $this->content->text .= (format_float($grades[$gradeid]->finalgrade,$item->decimals).'/'.(format_float($item->grademax,$item->decimals)));
@@ -369,7 +369,7 @@ class block_course_results extends block_base {
                 $worst = array_reverse($worst, true);
                 $this->content->text .= '<table class="grades generaltable"><caption>';
                 $this->content->text .= ($numworst == 1?get_string('worstgrade', 'block_course_results'):get_string('worstgrades', 'block_course_results', $numworst));
-                $this->content->text .= '</caption><colgroup class="number" /><colgroup class="name" /><colgroup class="grade" /><tbody>';
+                $this->content->text .= '</caption><colgroup class="name" /><colgroup class="grade" /><tbody>';
                 foreach($worst as $userid => $gradeid) {
                     switch($nameformat) {
                         case B_COURSERESULTS_NAME_FORMAT_ID:
@@ -387,7 +387,7 @@ class block_course_results extends block_base {
                             $thisname .= fullname($users[$userid]).'</a>';
                         break;
                     }
-                    $this->content->text .= '<tr class="r'.($rank%2).'"><td>'.(++$rank).'.</td><td>'.$thisname.'</td><td>';
+                    $this->content->text .= '<tr class="r'.($rank%2).'"><td>'.(++$rank).'. '.$thisname.'</td><td>';
                     switch($gradeformat) {
                         case B_COURSERESULTS_GRADE_FORMAT_FRA:
                             $this->content->text .= (format_float($grades[$gradeid]->finalgrade,$item->decimals).'/'.(format_float($item->grademax,$item->decimals)));
