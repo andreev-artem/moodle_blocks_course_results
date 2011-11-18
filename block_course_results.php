@@ -1,4 +1,4 @@
-<?php //$Id: block_course_results.php,v 1.2 2009/02/05 15:43:00 argentum@cdp.tsure.ru Exp $
+<?php
 
 define('B_COURSERESULTS_NAME_FORMAT_FULL', 1);
 define('B_COURSERESULTS_NAME_FORMAT_ID',   2);
@@ -14,11 +14,11 @@ class block_course_results extends block_base {
     }
 
     function applicable_formats() {
-        return array('course-view' => true);
+        return array('course' => true);
     }
 
     function get_content() {
-        global $USER, $CFG;
+        global $USER, $CFG, $DB;
 
         if (empty($this->instance)) {
             return $this->content;
@@ -33,13 +33,13 @@ class block_course_results extends block_base {
         }
 
         $this->content = new stdClass;
-        if (!empty($this->config->blockheader)) {
-            $this->content->text = '<div class="textbeforeresults">' . $this->config->blockheader . '</div>' . '<br />';
+        if (!empty($this->config->blockheader['text'])) {
+            $this->content->text = '<div class="textbeforeresults">' . $this->config->blockheader['text'] . '</div>' . '<br />';
         }
         $this->content->footer = '';
 
         $itemid   = empty($this->config->itemid) ? 0 : $this->config->itemid;
-        $courseid = $this->instance->pageid;
+        $courseid = $this->page->course->id;
         $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
         if(empty($itemid)) {
@@ -48,14 +48,14 @@ class block_course_results extends block_base {
         }
 
         // Get the grade item record
-        $item = get_record('grade_items', 'id', $itemid);
+        $item = $DB->get_record('grade_items', array('id' => $itemid));
         if(empty($item)) {
             $this->content->text = get_string('error_emptyitemrecord', 'block_course_results');
             return $this->content;
         }
 
         // Get the grades for this item
-        $grades = get_records('grade_grades', 'itemid', $itemid, 'finalgrade, timemodified DESC');
+        $grades = $DB->get_records('grade_grades', array('itemid' => $itemid), 'finalgrade, timemodified DESC');
 
         if(empty($grades)) {
             // No grades, sorry
@@ -81,12 +81,12 @@ class block_course_results extends block_base {
         $best      = array();
         $worst     = array();
 
-        $nameformat = intval(empty($this->config->nameformat)  ? B_COURSERESULTS_NAME_FORMAT_FULL : $this->config->nameformat);
+        $nameformat = intval(empty($this->config->nameformat) ? B_COURSERESULTS_NAME_FORMAT_FULL : $this->config->nameformat);
 
         // If the block is configured to operate in group mode, or if the name display format
         // is other than "fullname", then we need to retrieve the full course record
         if(!empty($this->config->usegroups) || $nameformat != B_COURSERESULTS_NAME_FORMAT_FULL) {
-            $course = get_record_select('course', 'id = '.$courseid, 'groupmode, groupmodeforce, student');
+            $course = $DB->get_record_select('course', 'id = '.$courseid, 'groupmode, groupmodeforce, student');
         }
 
         if(!empty($this->config->usegroups)) {
@@ -96,7 +96,7 @@ class block_course_results extends block_base {
             }
             else {
                 if ($item->itemtype == 'mod') {
-                    $module = get_record_sql("SELECT cm.groupmode FROM {$CFG->prefix}modules m
+                    $module = $DB->get_record_sql("SELECT cm.groupmode FROM {$CFG->prefix}modules m
                                             LEFT JOIN {$CFG->prefix}course_modules cm ON m.id = cm.module
                                             WHERE m.name = '{$item->itemmodule}' AND cm.instance = {$item->iteminstance}");
                     $groupmode = $module->groupmode;
@@ -128,7 +128,7 @@ class block_course_results extends block_base {
             }
 
             // Now find which groups these users belong in
-            $groupofuser = get_records_sql(
+            $groupofuser = $DB->get_records_sql(
             'SELECT m.userid, m.groupid, g.name FROM '.$CFG->prefix.'groups g LEFT JOIN '.$CFG->prefix.'groups_members m ON g.id = m.groupid '.
             'WHERE g.courseid = '.$courseid.' AND m.userid IN ('.implode(',', $userids).')'
             );
@@ -278,7 +278,7 @@ class block_course_results extends block_base {
                 return $this->content;
             }
 
-            $mygroupsusers = get_records_list('groups_members', 'groupid', implode(',', array_keys($mygroups)), '', 'userid, id');
+            $mygroupsusers = $DB->get_records_list('groups_members', 'groupid', implode(',', array_keys($mygroups)), '', 'userid, id');
             // There should be at least one user there, ourselves. So no more tests.
 
             // Just filter out the grades belonging to other users, and proceed as if there were no groups
@@ -314,7 +314,7 @@ class block_course_results extends block_base {
 
             // Now grab all the users from the database
             $userids = array_merge(array_keys($best), array_keys($worst));
-            $users = get_records_list('user', 'id', implode(',',$userids), '', 'id, firstname, lastname, idnumber, picture, imagealt');
+            $users = $DB->get_records_list('user', 'id', $userids, '', 'id, firstname, lastname, idnumber, picture, imagealt');
 
             // Ready for output!
 
@@ -407,8 +407,8 @@ class block_course_results extends block_base {
             break;
         }
         
-        if (!empty($this->config->blockheader)) {
-            $this->content->text .= '<br />' . '<div class="textafterresults">' . $this->config->blockfooter . '</div>';
+        if (!empty($this->config->blockheader['text'])) {
+            $this->content->text .= '<br />' . '<div class="textafterresults">' . $this->config->blockfooter['text'] . '</div>';
         }
 
         return $this->content;
