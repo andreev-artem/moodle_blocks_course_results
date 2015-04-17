@@ -20,10 +20,20 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->version = 2015041500;
+defined('MOODLE_INTERNAL') || die();
 
-$plugin->cron = 0;
+$capabilities = array(
 
-$plugin->component = 'block_course_results';
-$plugin->requires = 2010112400;
-$plugin->release = '2.1';
+    'block/course_results:addinstance' => array(
+        'riskbitmask' => RISK_SPAM | RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+
+        'clonepermissionsfrom' => 'moodle/site:manageblocks'
+    ),
+);
